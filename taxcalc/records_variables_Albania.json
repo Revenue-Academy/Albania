@@ -1,0 +1,202 @@
+{
+    "comment00": "This JSON file contains information on records variables:",
+    "comment01": "- Each variable has a type, which can be either the real or",
+    "comment02": "  integer string enclosed in double quotes.",
+    "comment04": "- Each variable has a desc, a description this is used in",
+    "comment05": "  the documentation.",
+    "comment06": "- A variable that is required to appear in the data input",
+    "comment07": "  file should have a 'required' key that has a true value.",
+    "comment08": "- The variables are grouped into two categories:",
+    "comment09": "  'read' variables that can be read from the input data",
+    "comment10": "    and have the data type specified here; if a 'read'",
+    "comment11": "    variable is not in an input data file, its value is",
+    "comment12": "    assumed to be zero for each filing unit.",
+    "comment13": "  'calc' variables that computed for each filing unit in",
+    "comment14": "    the calcfunctions.py code.",
+    "comment20": "- Each 'read' variable must have a 'valid' key that has a",
+    "comment21": "  dictionary value, where the dictionary contains zero or",
+    "comment22": "  variable validation rule subkey:value pairs.  There are",
+    "comment23": "  four kinds of rule subkeys: 'gt_or_eq_to', 'lt_or_eq_to',",
+    "comment24": "  'eq_to_sum_of_vars', and 'zero_for_subset'.  The expected",
+    "comment25": "  value varies by key: 'gt_or_eq_to' and 'lt_or_eq_to'",
+    "comment26": "  expect either an integer or a read-variable-name string;",
+    "comment27": "  'eq_to_sum_of_vars' expect a list containing the read-",
+    "comment28": "  variable-name strings that are added together; and",
+    "comment29": "  'zero_for_subset' expects a string containing an",
+    "comment30": "  expression containing three space-delimited tokens that",
+    "comment31": "  form a boolean expression defining a subset of records.",
+    "comment40": "- A 'read' variable that is extrapolated by a growth factor",
+    "comment41": "  must have an 'extrapolate' key that has a true value;",
+    "comment42": "  non-extrapolated variables can either omit the",
+    "comment43": "  'extrapolate' key:value pair or have an 'extrapolate' key",
+    "comment44": "  that has a false value.",
+    "comment90": "NOTE: comments can appear only at the top logical level",
+    "comment91": "  of the JSON file, which means no comments are allowed",
+    "comment92": "  inside the braces for the 'read' variables section or",
+    "comment93": "  inside the 'calc' variables section.",
+
+    "comment-read-s": "START OF 'read' VARIABLES:",
+    "read": {
+
+        "recid": {
+            "required": true,
+            "type": "integer",
+            "desc": "Unique positive numeric identifier for each filing unit",
+            "valid": {"gt_or_eq_to": 1}
+        },
+        "year": {
+            "required": true,
+            "type": "integer",
+            "desc": "Year for which taxes are calculated",
+            "valid": {"gt_or_eq_to": 2019}
+        },
+        "weight": {
+            "type": "real",
+            "desc": "Filing unit's sampling weight",
+            "valid": {"gt_or_eq_to": 0},
+            "extrapolate": true
+        },
+        "form": {
+            "type": "integer",
+            "desc": "Data source: 0=DIVA, 1=WAGE, 2=WHLD",
+            "valid": {"gt_or_eq_to": 0, "lt_or_eq_to": 2},
+            "extrapolate": false
+        },
+        "job": {
+            "type": "integer",
+            "desc": "Has a job: 1=yes, 0=no",
+            "valid": {"gt_or_eq_to": 0, "lt_or_eq_to": 1},
+            "extrapolate": false
+        },
+        "empinc": {
+            "type": "real",
+            "desc": "Income from wage employment [3]",
+            "valid": {"gt_or_eq_to": 0},
+            "extrapolate": true
+        },
+        "divinc": {
+            "type": "real",
+            "desc": "Dividend income [5]",
+            "valid": {"gt_or_eq_to": 0},
+            "extrapolate": true
+        },
+        "othinc": {
+            "type": "real",
+            "desc": "Sum of all non-empinc, non-divinc income [6-14]",
+            "valid": {"gt_or_eq_to": 0},
+            "extrapolate": true
+        },
+        "dedinted": {
+            "type": "real",
+            "desc": "Deductable interest on education loans [16]",
+            "valid": {"gt_or_eq_to": 0},
+            "extrapolate": true
+        },
+        "dedmedex": {
+            "type": "real",
+            "desc": "Deductable out-of-pocket medical expenses [17]",
+            "valid": {"gt_or_eq_to": 0},
+            "extrapolate": true
+        }
+
+    },
+    "comment-read-e": "END OF 'read' VARIABLES:",
+
+    "comment-calc-s": "START OF 'calc' VARIABLES:",
+    "calc": {
+
+        "grossinc": {
+            "type": "real",
+            "desc": "Gross income [15]",
+            "=": "empinc + divinc + othinc"
+        },
+        "deductions": {
+            "type": "real",
+            "desc": "Total discountable expenses [18]",
+            "=": "dedinted + dedmedex"
+        },
+        "dedallowed": {
+            "type": "real",
+            "desc": "Total allowable discountable expenses"
+        },
+        "taxable_divinc": {
+            "type": "real",
+            "desc": "Taxable dividend income",
+            "=": "max(0, divinc - xdedallowed)",
+            "~": "where xdedallowed is dedallowed not used for taxable_reminc"
+        },
+        "taxable_reminc": {
+            "type": "real",
+            "desc": "Taxable other (non-empinc and non-divinc) income",
+            "=": "max(0, grossinc - empinc - divinc - dedallowed)",
+            "~": "unused dedallowed is used in taxable_divinc calculation"
+        },
+        "taxable_extinc": {
+            "type": "real",
+            "desc": "Taxable non-employment income [19]",
+            "=": "taxable_divinc + taxable_othinc"
+        },
+        "extinc_tax": {
+            "type": "real",
+            "desc": "Income tax on extra income (other than empinc) [20]",
+            "=": "flat rates applied to taxable_divinc and taxable_reminc"
+        },
+        "empinc_tax": {
+            "type": "real",
+            "desc": "Income tax on empinc",
+            "=": "progressive tax rate schedule applied to empinc"
+        },
+        "pitaxbc": {
+            "type": "real",
+            "desc": "Personal income tax liability before credit",
+            "=": "empinc_tax + extinc_tax"
+        },
+        "credit": {
+            "type": "real",
+            "desc": "Personal income tax credit"
+        },
+        "pitax": {
+            "type": "real",
+            "desc": "Personal income tax liability [21]",
+            "=": "empinc_tax + extinc_tax - credit"
+        },
+        "sitax_ee": {
+            "type": "real",
+            "desc": "Social insurance tax paid by employee"
+        },
+        "sitax_er": {
+            "type": "real",
+            "desc": "Social insurance tax paid by employer"
+        },
+        "hitax_ee": {
+            "type": "real",
+            "desc": "Health insurance tax paid by employee"
+        },
+        "hitax_er": {
+            "type": "real",
+            "desc": "Health insurance tax paid by employer"
+        },
+        "sstax": {
+            "type": "real",
+            "desc": "Social security (si+hi) tax liability (ee+er)",
+            "=": "sitax_ee + sitax_er + hitax_ee + hitax_er"
+        },
+        "tax": {
+            "type": "real",
+            "desc": "Personal income plus social security tax liability",
+            "=": "pitax + sstax"
+        },
+        "fullinc": {
+            "type": "real",
+            "desc": "Full income",
+            "=": "grossinc + sitax_er + hitax_er"
+        },
+        "aftertax_income": {
+            "type": "real",
+            "desc": "After-tax total income",
+            "=": "fullinc - tax"
+        }
+
+    },
+    "comment-calc-e": "END OF 'calc' VARIABLES:"
+}
