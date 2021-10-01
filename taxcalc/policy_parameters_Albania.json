@@ -1,0 +1,303 @@
+{
+    "comment00": "This JSON file contains information on policy parameters:",
+    "comment01": "- Values begin in start_year specified in policy_spec.json",
+    "comment02": "  with historical values through the last known year and are",
+    "comment03": "  extrapolated from the last known value using current-law",
+    "comment04": "  indexing assumptions and the reverting assumptions.",
+    "comment06": "- Many parameters are scalar meaning that each year's",
+    "comment07": "  value is either an integer, a real number, or a boolean",
+    "comment08": "  value (true or false); other parameters are vector",
+    "comment09": "  valued meaning that their values are indexed by some",
+    "comment10": "  variable such as type of filing unit.",
+    "comment11": "- Each parameter has a specified range of valid values.",
+    "comment12": "- Each parameter has two description fields that can be",
+    "comment13": "  used to in documentation.",
+    "comment90": "NOTE: comments can appear only at the top logical level",
+    "comment91": "  of the JSON file, which means no comments are allowed",
+    "comment92": "  inside the braces for a policy parameter.  However,",
+    "comment93": "  the 'notes' field can be used to make parameter-specific",
+    "comment94": "  comments.",
+
+    "no_flat_tax": {
+        "name": "No flat tax on non-employment income",
+        "desc": "Whether or not non-empinc is included in taxable income along with empinc",
+        "notes": "",
+        "value_type": "boolean",
+        "value_yrs": [2018],
+        "value": [false],
+        "valid_values": {"min": false, "max": true}
+    },
+
+    "taxinc_rate1": {
+        "name": "Personal income tax rate 1",
+        "desc": "PIT tax rate applied to taxable income below taxinc_brak1",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.0],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "taxinc_brak1": {
+        "name": "Upper threshold of tax bracket 1",
+        "desc": "Taxable income below this threshold is taxed at taxinc_rate1",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "indexable": true,
+        "indexed": false,
+        "value": [360e3],
+        "valid_values": {"min": 0, "max": "taxinc_brak2"}
+    },
+
+    "taxinc_rate2": {
+        "name": "Personal income tax rate 2",
+        "desc": "PIT tax rate applied to taxable income between taxinc_brak1 and taxinc_brak2",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.13],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "taxinc_brak2": {
+        "name": "Upper threshold of tax bracket 2",
+        "desc": "Taxable income between taxinc_brak1 and taxinc_brak2 is taxed at taxinc_rate2",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018,
+                      2019],
+        "indexable": true,
+        "indexed": false,
+        "value": [1560e3,
+                  1800e3],
+        "valid_values": {"min": "taxinc_brak1", "max": "taxinc_brak3"}
+    },
+
+    "taxinc_rate3": {
+        "name": "Personal income tax rate 3",
+        "desc": "PIT tax rate applied to taxable income between taxinc_brak2 and taxinc_brak3",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.23],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "taxinc_brak3": {
+        "name": "Upper threshold of tax bracket 3",
+        "desc": "Taxable income between taxinc_brak2 and taxinc_brak3 is taxed at taxinc_rate3",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "indexable": true,
+        "indexed": false,
+        "value": [3e99],
+        "valid_values": {"min": "taxinc_brak2", "max": "taxinc_brak4"}
+    },
+
+    "taxinc_rate4": {
+        "name": "Personal income tax rate 4",
+        "desc": "PIT tax rate applied to taxable income between taxinc_brak3 and taxinc_brak4",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.0],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "taxinc_brak4": {
+        "name": "Upper threshold of tax bracket 4",
+        "desc": "Taxable income between taxinc_brak3 and taxinc_brak4 is taxed at taxinc_rate4",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "indexable": true,
+        "indexed": false,
+        "value": [4e99],
+        "valid_values": {"min": "taxinc_brak3", "max": "taxinc_brak5"}
+    },
+
+    "taxinc_rate5": {
+        "name": "Personal income tax rate 5",
+        "desc": "PIT tax rate applied to taxable income between taxinc_brak4 and taxinc_brak5",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.0],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "taxinc_brak5": {
+        "name": "Upper threshold of tax bracket 5",
+        "desc": "Taxable income between taxinc_brak4 and taxinc_brak5 is taxed at taxinc_rate5",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "indexable": true,
+        "indexed": false,
+        "value": [5e99],
+        "valid_values": {"min": "taxinc_brak4", "max": 9e99}
+    },
+
+    "ded_threshold": {
+        "name": "Gross income deduction threshold",
+        "desc": "Gross income above which PIT deductions are not allowed",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "indexable": true,
+        "indexed": false,
+        "value": [1050e3],
+        "valid_values": {"min": 0, "max": 9e99}
+    },
+
+    "reminc_tax_rate": {
+        "name": "Remaining income (i.e., non-empinc and non-divinc) tax rate",
+        "desc": "PIT tax rate applied to grossinc less empinc+divinc less allowed deductions",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.15],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "divinc_tax_rate": {
+        "name": "Dividend income (divinc) tax rate",
+        "desc": "PIT tax rate on dividend income net of any unused deductions",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018,
+                      2019],
+        "value": [0.15,
+                  0.08],
+        "valid_values": {"min": 0, "max": "reminc_tax_rate"}
+    },
+
+    "credit_amount": {
+        "name": "PIT credit amount before phase-out",
+        "desc": "PIT credit amount when grossinc is below credit_po_beg",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.0],
+        "valid_values": {"min": 0, "max": 9e99}
+    },
+
+    "credit_po_begin": {
+        "name": "PIT credit linear phase-out begin gross income",
+        "desc": "Gross income at which PIT credit_amount begins its phase-out",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.0],
+        "valid_values": {"min": 0, "max": 9e99}
+    },
+
+    "credit_po_rate": {
+        "name": "PIT credit phase-out rate",
+        "desc": "Rate at which credit is phased out above credit_po_begin",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.0],
+        "valid_values": {"min": 0, "max": 9e99}
+    },
+
+    "credit_refund": {
+        "name": "PIT credit refundability",
+        "desc": "Whether PIT credit is refundable or nonrefundable",
+        "notes": "",
+        "value_type": "boolean",
+        "value_yrs": [2018],
+        "value": [false],
+        "valid_values": {"min": false, "max": true}
+    },
+
+    "ss_min_empinc": {
+        "name": "Minimum empinc for social security contributions",
+        "desc": "Minimum empinc for social security contributions",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018,
+                      2019,
+                      2020,
+                      2021],
+        "indexable": true,
+        "indexed": false,
+        "value": [288e3,
+                  312e3,
+                  312e3,
+                  360e3],
+        "valid_values": {"min": 0, "max": "ss_max_empinc"}
+    },
+
+    "ss_max_empinc": {
+        "name": "Maximum empinc for social insurance contributions",
+        "desc": "Maximum taxable empinc for social insurance contributions",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018,
+                      2019,
+                      2020,
+                      2021],
+        "indexable": true,
+        "indexed": false,
+        "value": [1270.200e3,
+                  1376.040e3,
+                  1376.040e3,
+                  1587.744e3],
+        "valid_values": {"min": "ss_min_empinc", "max": 9e99}
+    },
+
+    "cap_sstax_ee": {
+        "name": "Employee SSC limited to employment income",
+        "desc": "Whether or not employee SSC is capped by empinc",
+        "notes": "",
+        "value_type": "boolean",
+        "value_yrs": [2018],
+        "value": [true],
+        "valid_values": {"min": false, "max": true}
+    },
+
+    "si_ee_tax_rate": {
+        "name": "Tax rate for employee social insurance contributions",
+        "desc": "Employee social insurance tax rate",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.095],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "si_er_tax_rate": {
+        "name": "Tax rate for employer social insurance contributions",
+        "desc": "Employer social insurance tax rate",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.15],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "hi_ee_tax_rate": {
+        "name": "Tax rate for employee health insurance contributions",
+        "desc": "Employee health insurance tax rate",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.017],
+        "valid_values": {"min": 0, "max": 1}
+    },
+
+    "hi_er_tax_rate": {
+        "name": "Tax rate for employer health insurance contributions",
+        "desc": "Employer health insurance tax rate",
+        "notes": "",
+        "value_type": "real",
+        "value_yrs": [2018],
+        "value": [0.017],
+        "valid_values": {"min": 0, "max": 1}
+    }
+
+}
